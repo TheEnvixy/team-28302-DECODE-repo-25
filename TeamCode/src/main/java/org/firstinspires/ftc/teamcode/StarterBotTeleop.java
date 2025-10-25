@@ -166,6 +166,5 @@ public class StarterBotTeleop extends OpMode {
         backSpin.setPower(servoPower);
         indexLeft.setPower(servoPower);
         indexRight.setPower(servoPower);
-
     }
 }
