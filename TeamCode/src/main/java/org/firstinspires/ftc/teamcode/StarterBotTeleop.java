@@ -45,7 +45,7 @@ public class StarterBotTeleop extends OpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor flyWheel = null;
+    private CRServo flyWheel = null;
     private CRServo backSpin = null;
     private CRServo indexLeft = null;
     private CRServo indexRight = null;
@@ -62,7 +62,7 @@ public class StarterBotTeleop extends OpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        flyWheel = hardwareMap.get(DcMotor.class, "flyWheel");
+        flyWheel = hardwareMap.get(CRServo.class, "flyWheel");
         backSpin = hardwareMap.get(CRServo.class, "backSpin");
         indexLeft = hardwareMap.get(CRServo.class, "leftServo");
         indexRight = hardwareMap.get(CRServo.class, "rightServo");
@@ -94,7 +94,7 @@ public class StarterBotTeleop extends OpMode {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        //flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
     }
 
