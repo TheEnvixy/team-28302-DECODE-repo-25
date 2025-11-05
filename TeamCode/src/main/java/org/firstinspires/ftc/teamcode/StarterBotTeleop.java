@@ -119,7 +119,7 @@ public class StarterBotTeleop extends OpMode {
     public void loop() {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
-        if (gamepad1.a) {
+        if (gamepad2.a) {
             setLauncher(GOAL_SPEED, FULL_SPEED);
         } else {
             setLauncher(STOP_SPEED, STOP_SPEED);
