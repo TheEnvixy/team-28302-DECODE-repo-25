@@ -68,7 +68,7 @@ public class StarterBotTeleop extends OpMode {
         indexRight = hardwareMap.get(CRServo.class, "rightServo");
 
         // Incase of wiring into the wrong ports these flags can be switched
-        backSpin.setDirection(DcMotor.Direction.FORWARD);
+        backSpin.setDirection(DcMotor.Direction.REVERSE);
         indexLeft.setDirection(DcMotor.Direction.FORWARD);
         indexRight.setDirection(DcMotor.Direction.REVERSE);
 
