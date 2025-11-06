@@ -40,7 +40,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class StarterBotTeleop extends OpMode {
     static final double FULL_SPEED = 1.0;
-    static final double GOAL_SPEED = 0.8;
+    static final double GOAL_SPEED = 1.0;
     static final double STOP_SPEED = 0.0;
 
     private DcMotor leftFrontDrive = null;
@@ -70,7 +70,7 @@ public class StarterBotTeleop extends OpMode {
         indexRight = hardwareMap.get(CRServo.class, "rightServo");
 
         // Incase of wiring into the wrong ports these flags can be switched
-        backSpin.setDirection(DcMotor.Direction.FORWARD);
+        backSpin.setDirection(DcMotor.Direction.REVERSE);
         indexLeft.setDirection(DcMotor.Direction.FORWARD);
         indexRight.setDirection(DcMotor.Direction.REVERSE);
 
