@@ -24,8 +24,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
 /*
  * This file contains a minimal example of an iterative (Non-Linear) "OpMode". An OpMode is a
  * 'program' that runs in either the autonomous or the TeleOp period of an FTC match. The names
@@ -38,9 +36,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  */
 @TeleOp
 
-public class StarterBotTeleop extends OpMode {
+public class TeleOpNoEndGame extends OpMode {
     static final double FULL_SPEED = 1.0;
-    static final double GOAL_SPEED = 1.0;
+    static final double FLY_GOAL_SPEED = 1.0;
+    static final double INDEX_GOAL_SPEED = 0.2;
     static final double STOP_SPEED = 0.0;
 
     private DcMotor leftFrontDrive = null;
@@ -71,8 +70,8 @@ public class StarterBotTeleop extends OpMode {
 
         // Incase of wiring into the wrong ports these flags can be switched
         backSpin.setDirection(DcMotor.Direction.FORWARD);
-        indexLeft.setDirection(DcMotor.Direction.FORWARD);
-        indexRight.setDirection(DcMotor.Direction.REVERSE);
+        indexLeft.setDirection(DcMotor.Direction.REVERSE);
+        indexRight.setDirection(DcMotor.Direction.FORWARD);
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -81,10 +80,10 @@ public class StarterBotTeleop extends OpMode {
          * Note: The settings here assume direct drive on left and right wheels. Gear
          * Reduction or 90 Deg drives may require direction flips
          */
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         flyWheel.setDirection(DcMotor.Direction.FORWARD);
 
         /*
@@ -122,9 +121,9 @@ public class StarterBotTeleop extends OpMode {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
         if (gamepad2.a) {
-            setLauncher(GOAL_SPEED, FULL_SPEED);
+            setLauncher(FLY_GOAL_SPEED, FULL_SPEED,INDEX_GOAL_SPEED);
         } else {
-            setLauncher(STOP_SPEED, STOP_SPEED);
+            setLauncher(STOP_SPEED, STOP_SPEED,STOP_SPEED);
         }
     }
 
@@ -163,10 +162,10 @@ public class StarterBotTeleop extends OpMode {
      * This sets the 1 flywheel motor, 1 back spin CR servo and the 2 index CR servos to the
      * given power.
      */
-    public void setLauncher(double flyPower, double servoPower) {
+    public void setLauncher(double flyPower, double servoPower, double indexPower) {
         flyWheel.setPower(flyPower);
         backSpin.setPower(servoPower);
-        indexLeft.setPower(servoPower);
-        indexRight.setPower(servoPower);
+        indexLeft.setPower(indexPower);
+        indexRight.setPower(indexPower);
     }
 }
