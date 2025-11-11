@@ -55,6 +55,13 @@ public class TeleOpNoEndGame extends OpMode {
     private CRServo backSpin = null;
     private CRServo indexLeft = null;
     private CRServo indexRight = null;
+    ////private CRServo foot = null;
+    ///private double FOOT_UP_POWER = 1.0;
+    ///private double FOOT_DOWN_POWER = -0.85;
+    ///private double FOOT_OFF_POWER = 0.0;
+    ///private double footPower = FOOT_OFF_POWER;
+    ///private enum FootMode {UP, DOWN, BRAKE}
+    ///private FootMode footmode;
 
     double leftFrontPower;
     double rightFrontPower;
@@ -124,7 +131,6 @@ public class TeleOpNoEndGame extends OpMode {
     @Override
     public void loop() {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, wheelSpeedMulti);
-//
         ///For controller 1
         //Cycles throught the speed mutipliers
         if (gamepad1.right_bumper || gamepad1.left_bumper){
@@ -164,15 +170,21 @@ public class TeleOpNoEndGame extends OpMode {
             setLauncher(STOP_SPEED,STOP_SPEED);
         }
         //To change the power of the flyWheel
-        if (gamepad2.right_bumper || gamepad1.left_bumper){
+        if(gamepad2.right_bumper && flyWheelSpeed < 1){
+            flyWheelSpeed ++;
+        }
+        if (gamepad2.left_bumper && flyWheelSpeed > 0) {
+            flyWheelSpeed --;
+        }
+        /*if (gamepad2.right_bumper || gamepad1.left_bumper){
 
-            if (flyWheelSpeed < 1 && flyWheelSpeed > 0){
+            if (flyWheelSpeed <= 1 && flyWheelSpeed > 0){
                 if (gamepad1.right_bumper)flyWheelSpeed += 0.1;
                 else flyWheelSpeed -= 0.1;
             }
             telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
             telemetry.update();
-        }
+        }*/
         //To move balls back in the shoot
         if (gamepad2.b){
             setBackSpin(1);
@@ -233,8 +245,8 @@ public class TeleOpNoEndGame extends OpMode {
     public void turnrobot (double speed, double degrees, boolean turnRight){
         //Setting up all the constants
         final double TICKS_PER_MOTOR_REV = 560; //REV HD Hex 20:1 Motor (Online)
-        final double WHEEL_DIAMETER = 2.75; //Changes depending on the wheel
-        final double ROBOT_DIAMETER = 14; //Changers depending the competiton
+        final double WHEEL_DIAMETER = 2.99; //Changes depending on the wheel
+        final double ROBOT_DIAMETER = 18; //Changers depending the competiton
         final double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV) / (WHEEL_DIAMETER * Math.PI);
         //Calculate distance each wheel travels to turn the given angle
         double CIRCUMFERENCE = Math.PI * ROBOT_DIAMETER;
