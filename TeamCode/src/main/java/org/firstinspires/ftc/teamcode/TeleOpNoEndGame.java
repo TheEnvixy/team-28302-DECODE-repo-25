@@ -37,10 +37,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp
 
 public class TeleOpNoEndGame extends OpMode {
-    static final double FULL_SPEED = 1.0;
+    /*static final double FULL_SPEED = 1.0;
     static final double FLY_GOAL_SPEED = 1.0;
-    static final double INDEX_GOAL_SPEED = 0.2;
+    static final double INDEX_GOAL_SPEED = 0.2;*/
     static final double STOP_SPEED = 0.0;
+    static final double INDEX_GOAL_SPEED = 1;
+    static double flyWheelSpeed = 1;
+    static double wheelSpeedMulti = 1;
+
 
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -80,10 +84,10 @@ public class TeleOpNoEndGame extends OpMode {
          * Note: The settings here assume direct drive on left and right wheels. Gear
          * Reduction or 90 Deg drives may require direction flips
          */
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         flyWheel.setDirection(DcMotor.Direction.FORWARD);
 
         /*
@@ -118,10 +122,43 @@ public class TeleOpNoEndGame extends OpMode {
      */
     @Override
     public void loop() {
-        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, wheelSpeedMulti);
+        int counter = 0;
 
+        ///For controller 1
+        //Cycles throught the speed mutipliers
+        if (gamepad1.right_bumper || gamepad1.left_bumper){
+            //Sees if right bumper or left bumper was click and changed accordingly
+            if (gamepad1.right_bumper)counter ++;
+            else counter --;
+            //See at what point in the cycle it is at
+            if (counter == 1){
+                wheelSpeedMulti = 0.5;
+            }
+            else if (counter == 2){
+                wheelSpeedMulti = 0.75;
+            }
+            else {
+                wheelSpeedMulti = 1;
+                counter = 0;
+            }
+            //Displays the power of the multiplier
+            telemetry.addData("Wheel Multiplier", wheelSpeedMulti);
+            telemetry.update();
+        }
+        if (gamepad1.dpad_left){
+            turnrobot (0.5,45,false);//Turns 45 degrees left
+        }
+        if (gamepad1.dpad_right){
+            turnrobot(0.5,45,true);//Turns 45 degree right
+        }
+        if (gamepad1.dpad_down){
+            turnrobot(0.5,180,true);//Turns 180 degrees
+        }
+
+        ///For controller 2
         if (gamepad2.a) {
-            setLauncher(FLY_GOAL_SPEED, FULL_SPEED,INDEX_GOAL_SPEED);
+            setLauncher(flyWheelSpeed, flyWheelSpeed,INDEX_GOAL_SPEED);
         } else {
             setLauncher(STOP_SPEED, STOP_SPEED,STOP_SPEED);
         }
@@ -138,7 +175,7 @@ public class TeleOpNoEndGame extends OpMode {
      * This method does the math and sets the power to motors for
      * an arcade drive.
      */
-    void mecanumDrive(double forward, double strafe, double rotate){
+    void mecanumDrive(double forward, double strafe, double rotate, double mutiplier){
 
         /* the denominator is the largest motor power (absolute value) or 1
          * This ensures all the powers maintain the same ratio,
@@ -146,10 +183,10 @@ public class TeleOpNoEndGame extends OpMode {
          */
         double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(rotate), 1);
 
-        leftFrontPower = (forward + strafe + rotate) / denominator;
-        rightFrontPower = (forward - strafe - rotate) / denominator;
-        leftBackPower = (forward - strafe + rotate) / denominator;
-        rightBackPower = (forward + strafe - rotate) / denominator;
+        leftFrontPower = ((forward + strafe + rotate) / denominator)*mutiplier;
+        rightFrontPower = ((forward - strafe - rotate) / denominator)*mutiplier;
+        leftBackPower = ((forward - strafe + rotate) / denominator)*mutiplier;
+        rightBackPower = ((forward + strafe - rotate) / denominator)*mutiplier;
 
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
@@ -167,5 +204,55 @@ public class TeleOpNoEndGame extends OpMode {
         backSpin.setPower(servoPower);
         indexLeft.setPower(indexPower);
         indexRight.setPower(indexPower);
+    }
+    ///Makes the bot turn left or write when the right button is pressed
+    public void turnrobot (double speed, double degrees, boolean turnRight){
+        //Setting up all the constants
+        final double TICKS_PER_MOTOR_REV = 560; //REV HD Hex 20:1 Motor (Online)
+        final double WHEEL_DIAMETER = 2.75; //Changes depending on the wheel
+        final double ROBOT_DIAMETER = 14; //Changers depending the competiton
+        final double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV) / (WHEEL_DIAMETER * Math.PI);
+        //Calculate distance each wheel travels to turn the given angle
+        double CIRCUMFERENCE = Math.PI * ROBOT_DIAMETER;
+        double distancePerDegree = CIRCUMFERENCE / 360.0;
+        double turnDistance = distancePerDegree * degrees;
+        //Determines what direction to turn
+        double leftDistance = turnRight ? turnDistance : -turnDistance; //(boolean ? ifTrue : ifFalse)
+        double rightDistance = -leftDistance;
+        //Calculate target encoder positions
+        int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftDistance * TICKS_PER_INCH);
+        int newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int)(leftDistance * TICKS_PER_INCH);
+        int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightDistance * TICKS_PER_INCH);
+        int newRightBackTarget = rightBackDrive.getCurrentPosition() + (int)(rightDistance * TICKS_PER_INCH);
+        //Sets the target position
+        leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+        leftBackDrive.setTargetPosition(newLeftBackTarget);
+        rightFrontDrive.setTargetPosition(newRightFrontTarget);
+        rightBackDrive.setTargetPosition(newRightBackTarget);
+        //Changes the mode to run to position
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Makes the robot start moving
+        leftFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+        //Waits until the robot stops moving
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
+            telemetry.addData("Turning", turnRight ? "Right" : "Left");
+            telemetry.update();
+        }
+        //Sets all the motors back to zero
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        //Resets the encoder mode
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
