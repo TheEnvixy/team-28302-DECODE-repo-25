@@ -44,6 +44,7 @@ public class TeleOpNoEndGame extends OpMode {
     static final double INDEX_GOAL_SPEED = 1;
     static double flyWheelSpeed = 1;
     static double wheelSpeedMulti = 1;
+    static int speedCounter = 0;
 
 
     private DcMotor leftFrontDrive = null;
@@ -123,24 +124,23 @@ public class TeleOpNoEndGame extends OpMode {
     @Override
     public void loop() {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, wheelSpeedMulti);
-        int counter = 0;
 
         ///For controller 1
         //Cycles throught the speed mutipliers
         if (gamepad1.right_bumper || gamepad1.left_bumper){
             //Sees if right bumper or left bumper was click and changed accordingly
-            if (gamepad1.right_bumper)counter ++;
-            else counter --;
+            if (gamepad1.right_bumper)speedCounter ++;
+            else speedCounter --;
             //See at what point in the cycle it is at
-            if (counter == 1){
+            if (speedCounter == 1){
                 wheelSpeedMulti = 0.5;
             }
-            else if (counter == 2){
+            else if (speedCounter == 2){
                 wheelSpeedMulti = 0.75;
             }
             else {
                 wheelSpeedMulti = 1;
-                counter = 0;
+                speedCounter = 0;
             }
             //Displays the power of the multiplier
             telemetry.addData("Wheel Multiplier", wheelSpeedMulti);
