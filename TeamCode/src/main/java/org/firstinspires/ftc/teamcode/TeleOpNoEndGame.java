@@ -63,6 +63,10 @@ public class TeleOpNoEndGame extends OpMode {
     ///private enum FootMode {UP, DOWN, BRAKE}
     ///private FootMode footmode;
 
+    //Used for the cycling through the wheel power options
+    boolean prevRightBumper1 = false;
+    boolean prevLeftBumper1 = false;
+
     double leftFrontPower;
     double rightFrontPower;
     double leftBackPower;
@@ -133,30 +137,35 @@ public class TeleOpNoEndGame extends OpMode {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, wheelSpeedMulti);
         ///For controller 1
         //Cycles throught the speed mutipliers
-        if (gamepad1.right_bumper || gamepad1.left_bumper){
-            //Sees if right bumper or left bumper was click and changed accordingly
-            if (gamepad1.right_bumper)speedCounter ++;
-            else speedCounter --;
-            //See at what point in the cycle it is at
-            if (speedCounter == 1){
-                wheelSpeedMulti = 0.5;
-            }
-            else if (speedCounter == 2){
-                wheelSpeedMulti = 0.75;
-            }
-            else {
-                wheelSpeedMulti = 1;
-                speedCounter = 0;
-            }
-            //Displays the power of the multiplier
-            telemetry.addData("Wheel Multiplier", wheelSpeedMulti);
-            telemetry.update();
+        if (gamepad1.right_bumper && !prevRightBumper1){ //Sees when bumper goes from not pressed -> pressed
+            speedCounter ++;
         }
+        else if (gamepad1.left_bumper && !prevLeftBumper1){
+            speedCounter --;
+        }
+        // Wrap between 1–3
+        if (speedCounter > 3) speedCounter = 1;
+        if (speedCounter < 1) speedCounter = 3;
+        // Cycle through speed settings
+        if (speedCounter == 1) {
+            wheelSpeedMulti = 0.5;
+        } else if (speedCounter == 2) {
+            wheelSpeedMulti = 0.75;
+        } else if (speedCounter == 3){
+            wheelSpeedMulti = 1;
+        }
+        // Update telemetry
+        telemetry.addData("Wheel Multiplier", wheelSpeedMulti);
+        telemetry.update();
+        // Remember last button states
+        prevRightBumper1 = gamepad1.right_bumper;
+        prevLeftBumper1 = gamepad1.left_bumper;
+
         if (gamepad1.dpad_left){
-            turnrobot (0.5,45,false);//Turns 45 degrees left
+            turnrobot (0.5,45,true);//Turns 45 degrees left
         }
         if (gamepad1.dpad_right){
-            turnrobot(0.5,45,true);//Turns 45 degree right
+            turnrobot(0.5,45,false);//Turns 45 degree right
         }
         if (gamepad1.dpad_down){
             turnrobot(0.5,180,true);//Turns 180 degrees
@@ -171,10 +180,16 @@ public class TeleOpNoEndGame extends OpMode {
         }
         //To change the power of the flyWheel
         if(gamepad2.right_bumper && flyWheelSpeed < 1){
-            flyWheelSpeed ++;
+            flyWheelSpeed += 0.1;
+            telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
+            telemetry.update();
+
         }
         if (gamepad2.left_bumper && flyWheelSpeed > 0) {
-            flyWheelSpeed --;
+            flyWheelSpeed -= 0.1;
+            telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
+            telemetry.update();
+
         }
         /*if (gamepad2.right_bumper || gamepad1.left_bumper){
 
@@ -242,7 +257,7 @@ public class TeleOpNoEndGame extends OpMode {
         indexRight.setPower(-power);
     }
     ///Makes the bot turn left or write when the right button is pressed
-    public void turnrobot (double speed, double degrees, boolean turnRight){
+    public void turnrobot (double speed, double degrees, boolean turnLeft){
         //Setting up all the constants
         final double TICKS_PER_MOTOR_REV = 560; //REV HD Hex 20:1 Motor (Online)
         final double WHEEL_DIAMETER = 2.99; //Changes depending on the wheel
@@ -253,7 +268,7 @@ public class TeleOpNoEndGame extends OpMode {
         double distancePerDegree = CIRCUMFERENCE / 360.0;
         double turnDistance = distancePerDegree * degrees;
         //Determines what direction to turn
-        double leftDistance = turnRight ? turnDistance : -turnDistance; //(boolean ? ifTrue : ifFalse)
+        double leftDistance = turnLeft ? turnDistance : -turnDistance; //(boolean ? ifTrue : ifFalse)
         double rightDistance = -leftDistance;
         //Calculate target encoder positions
         int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftDistance * TICKS_PER_INCH);
@@ -277,7 +292,7 @@ public class TeleOpNoEndGame extends OpMode {
         rightBackDrive.setPower(speed);
         //Waits until the robot stops moving
         while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
-            telemetry.addData("Turning", turnRight ? "Right" : "Left");
+            telemetry.addData("Turning", turnLeft ? "Right" : "Left");
             telemetry.update();
         }
         //Sets all the motors back to zero
