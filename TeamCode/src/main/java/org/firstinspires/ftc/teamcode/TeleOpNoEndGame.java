@@ -44,7 +44,8 @@ public class TeleOpNoEndGame extends OpMode {
     static final double INDEX_GOAL_SPEED = 1;
     static double flyWheelSpeed = 1;
     static double wheelSpeedMulti = 1;
-    static int speedCounter = 0;
+    static int wheelSpeedCounter = 0;
+    static int flyWheelSpeedCounter = 0;
 
 
     private DcMotor leftFrontDrive = null;
@@ -66,6 +67,8 @@ public class TeleOpNoEndGame extends OpMode {
     //Used for the cycling through the wheel power options
     boolean prevRightBumper1 = false;
     boolean prevLeftBumper1 = false;
+    boolean prevRightBumper2 = false;
+    boolean prevLeftBumper2 = false;
 
     double leftFrontPower;
     double rightFrontPower;
@@ -136,31 +139,31 @@ public class TeleOpNoEndGame extends OpMode {
     public void loop() {
         mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, wheelSpeedMulti);
         ///For controller 1
+        ///                           FOR ALLOWING THE DRIVER TO CHANGE WHEEL POWER
         //Cycles throught the speed mutipliers
         if (gamepad1.right_bumper && !prevRightBumper1){ //Sees when bumper goes from not pressed -> pressed
-            speedCounter ++;
+            wheelSpeedCounter ++;
         }
         else if (gamepad1.left_bumper && !prevLeftBumper1){
-            speedCounter --;
+            wheelSpeedCounter --;
         }
         // Wrap between 1–3
-        if (speedCounter > 3) speedCounter = 1;
-        if (speedCounter < 1) speedCounter = 3;
+        if (wheelSpeedCounter > 3) wheelSpeedCounter = 1;
+        if (wheelSpeedCounter < 1) wheelSpeedCounter = 3;
         // Cycle through speed settings
-        if (speedCounter == 1) {
+        if (wheelSpeedCounter == 1) {
             wheelSpeedMulti = 0.5;
-        } else if (speedCounter == 2) {
+        } else if (wheelSpeedCounter == 2) {
             wheelSpeedMulti = 0.75;
-        } else if (speedCounter == 3){
+        } else if (wheelSpeedCounter == 3){
             wheelSpeedMulti = 1;
         }
         // Update telemetry
         telemetry.addData("Wheel Multiplier", wheelSpeedMulti);
-        telemetry.update();
         // Remember last button states
         prevRightBumper1 = gamepad1.right_bumper;
         prevLeftBumper1 = gamepad1.left_bumper;
-
+        ///                SO THE DRIVER CAN PRESS A BUTTON TO TURN A CERTAIN DEGREE 
         if (gamepad1.dpad_left){
             turnrobot (0.5,45,true);//Turns 45 degrees left
         }
@@ -172,14 +175,38 @@ public class TeleOpNoEndGame extends OpMode {
         }
 
         ///For controller 2
-        //To make the ball shoot
+        ///             TO MAKE THE BOT SHOOT
         if (gamepad2.a) {
             setLauncher(flyWheelSpeed,INDEX_GOAL_SPEED);
         } else {
             setLauncher(STOP_SPEED,STOP_SPEED);
         }
-        //To change the power of the flyWheel
-        if(gamepad2.right_bumper && flyWheelSpeed < 1){
+        ///             SO THE DRIVER CAN CHANGE THE SPEED OF THE FLY WHEEL
+        //Cycles throught the speed mutipliers
+        if (gamepad2.right_bumper && !prevRightBumper2){ //Sees when bumper goes from not pressed -> pressed
+            flyWheelSpeedCounter ++;
+        }
+        else if (gamepad2.left_bumper && !prevLeftBumper2){
+            flyWheelSpeedCounter --;
+        }
+        // Wrap between 1–3
+        if (flyWheelSpeedCounter > 3) flyWheelSpeedCounter = 1;
+        if (flyWheelSpeedCounter < 1) flyWheelSpeedCounter = 3;
+        // Cycle through speed settings
+        if (flyWheelSpeedCounter == 1) {
+            flyWheelSpeed = 0.60;
+        } else if (flyWheelSpeedCounter == 2) {
+            flyWheelSpeed = 0.80;
+        } else if (flyWheelSpeedCounter == 3){
+            flyWheelSpeed = 1;
+        }
+        // Update telemetry
+        telemetry.addData("FlyWheel Multiplier", flyWheelSpeed);
+        // Remember last button states
+        prevRightBumper2 = gamepad2.right_bumper;
+        prevLeftBumper2 = gamepad2.left_bumper;
+        
+        /*if(gamepad2.right_bumper && flyWheelSpeed < 1){
             flyWheelSpeed += 0.1;
             telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
             telemetry.update();
@@ -207,6 +234,7 @@ public class TeleOpNoEndGame extends OpMode {
         else {
             setBackSpin (STOP_SPEED);
         }
+        telemetry.update();
     }
 
     /*
