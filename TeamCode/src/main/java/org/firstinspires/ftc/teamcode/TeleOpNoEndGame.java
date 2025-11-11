@@ -157,10 +157,28 @@ public class TeleOpNoEndGame extends OpMode {
         }
 
         ///For controller 2
+        //To make the ball shoot
         if (gamepad2.a) {
-            setLauncher(flyWheelSpeed, flyWheelSpeed,INDEX_GOAL_SPEED);
+            setLauncher(flyWheelSpeed,INDEX_GOAL_SPEED);
         } else {
-            setLauncher(STOP_SPEED, STOP_SPEED,STOP_SPEED);
+            setLauncher(STOP_SPEED,STOP_SPEED);
+        }
+        //To change the power of the flyWheel
+        if (gamepad2.right_bumper || gamepad1.left_bumper){
+
+            if (flyWheelSpeed < 1 && flyWheelSpeed > 0){
+                if (gamepad1.right_bumper)flyWheelSpeed += 0.1;
+                else flyWheelSpeed -= 0.1;
+            }
+            telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
+            telemetry.update();
+        }
+        //To move balls back in the shoot
+        if (gamepad2.b){
+            setBackSpin(1);
+        }
+        else {
+            setBackSpin (STOP_SPEED);
         }
     }
 
@@ -199,11 +217,17 @@ public class TeleOpNoEndGame extends OpMode {
      * This sets the 1 flywheel motor, 1 back spin CR servo and the 2 index CR servos to the
      * given power.
      */
-    public void setLauncher(double flyPower, double servoPower, double indexPower) {
+    public void setLauncher(double flyPower, double indexPower) {
         flyWheel.setPower(flyPower);
-        backSpin.setPower(servoPower);
+        backSpin.setPower(flyPower);
         indexLeft.setPower(indexPower);
         indexRight.setPower(indexPower);
+    }
+    ///Allows to user to just spin the back spin to push ball back
+    public void setBackSpin (double power){
+        backSpin.setPower(-power);
+        indexLeft.setPower(-power);
+        indexRight.setPower(-power);
     }
     ///Makes the bot turn left or write when the right button is pressed
     public void turnrobot (double speed, double degrees, boolean turnRight){
