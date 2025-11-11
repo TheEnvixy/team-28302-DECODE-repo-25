@@ -205,28 +205,7 @@ public class TeleOpNoEndGame extends OpMode {
         // Remember last button states
         prevRightBumper2 = gamepad2.right_bumper;
         prevLeftBumper2 = gamepad2.left_bumper;
-        
-        /*if(gamepad2.right_bumper && flyWheelSpeed < 1){
-            flyWheelSpeed += 0.1;
-            telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
-            telemetry.update();
-
-        }
-        if (gamepad2.left_bumper && flyWheelSpeed > 0) {
-            flyWheelSpeed -= 0.1;
-            telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
-            telemetry.update();
-
-        }
-        /*if (gamepad2.right_bumper || gamepad1.left_bumper){
-
-            if (flyWheelSpeed <= 1 && flyWheelSpeed > 0){
-                if (gamepad1.right_bumper)flyWheelSpeed += 0.1;
-                else flyWheelSpeed -= 0.1;
-            }
-            telemetry.addData("Fly Wheel Speed", flyWheelSpeed);
-            telemetry.update();
-        }*/
+        ///       SO YOU CAN MOVE THE BALL BACK IN TO GET MORE MOMENTUM
         //To move balls back in the shoot
         if (gamepad2.b){
             setBackSpin(1);
@@ -234,6 +213,8 @@ public class TeleOpNoEndGame extends OpMode {
         else {
             setBackSpin (STOP_SPEED);
         }
+
+        //Updates all the data
         telemetry.update();
     }
 
