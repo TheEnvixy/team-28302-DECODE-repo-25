@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.external.samples.studica;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="Encoder Auto - Straight and Shoot", group="Linear Opmode")
+@Autonomous(name="ShooterSideRedAuto", group="Linear Opmode")
 public class ShooterSideRedAuto extends LinearOpMode{
 
     // Drive motors
@@ -64,12 +64,12 @@ public class ShooterSideRedAuto extends LinearOpMode{
 
         waitForStart();
 
-        driveStraight(5, 0);
+        movement (2, 2);
         shootRings();
         stopAllMotors();
     }
 
-    private void driveStraight(double forwardInches, double strafeInches) {
+    private void movement (double forwardInches, double strafeInches) {
         int xMovement = (int)(strafeInches * TICKS_PER_INCH);
         int yMovement = (int)(forwardInches * TICKS_PER_INCH);
 
@@ -140,5 +140,55 @@ public class ShooterSideRedAuto extends LinearOpMode{
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
+    }
+
+    public void turnrobot (double speed, double degrees, boolean turnLeft){
+        //Setting up all the constants
+        final double TICKS_PER_MOTOR_REV = 560; //REV HD Hex 20:1 Motor (Online)
+        final double WHEEL_DIAMETER = 2.99; //Changes depending on the wheel
+        final double ROBOT_DIAMETER = 18; //Changers depending the competiton
+        final double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV) / (WHEEL_DIAMETER * Math.PI);
+        //Calculate distance each wheel travels to turn the given angle
+        double CIRCUMFERENCE = Math.PI * ROBOT_DIAMETER;
+        double distancePerDegree = CIRCUMFERENCE / 360.0;
+        double turnDistance = distancePerDegree * degrees;
+        //Determines what direction to turn
+        double leftDistance = turnLeft ? turnDistance : -turnDistance; //(boolean ? ifTrue : ifFalse)
+        double rightDistance = -leftDistance;
+        //Calculate target encoder positions
+        int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftDistance * TICKS_PER_INCH);
+        int newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int)(leftDistance * TICKS_PER_INCH);
+        int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightDistance * TICKS_PER_INCH);
+        int newRightBackTarget = rightBackDrive.getCurrentPosition() + (int)(rightDistance * TICKS_PER_INCH);
+        //Sets the target position
+        leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+        leftBackDrive.setTargetPosition(newLeftBackTarget);
+        rightFrontDrive.setTargetPosition(newRightFrontTarget);
+        rightBackDrive.setTargetPosition(newRightBackTarget);
+        //Changes the mode to run to position
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Makes the robot start moving
+        leftFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+        //Waits until the robot stops moving
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
+            telemetry.addData("Turning", turnLeft ? "Right" : "Left");
+            telemetry.update();
+        }
+        //Sets all the motors back to zero
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        //Resets the encoder mode
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
