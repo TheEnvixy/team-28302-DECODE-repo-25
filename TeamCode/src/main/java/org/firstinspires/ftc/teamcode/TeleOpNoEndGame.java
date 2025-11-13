@@ -137,7 +137,7 @@ public class TeleOpNoEndGame extends OpMode {
      */
     @Override
     public void loop() {
-        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, wheelSpeedMulti);
+        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, wheelSpeedMulti);
         ///For controller 1
         ///                           FOR ALLOWING THE DRIVER TO CHANGE WHEEL POWER
         //Cycles throught the speed mutipliers
@@ -177,9 +177,9 @@ public class TeleOpNoEndGame extends OpMode {
         ///For controller 2
         ///             TO MAKE THE BOT SHOOT
         if (gamepad2.a) {
-            setLauncher(flyWheelSpeed,INDEX_GOAL_SPEED);
+            setLauncher(flyWheelSpeed,INDEX_GOAL_SPEED,1);
         } else {
-            setLauncher(STOP_SPEED,STOP_SPEED);
+            setLauncher(STOP_SPEED,STOP_SPEED,1);
         }
         ///             SO THE DRIVER CAN CHANGE THE SPEED OF THE FLY WHEEL
         //Cycles throught the speed mutipliers
@@ -253,7 +253,7 @@ public class TeleOpNoEndGame extends OpMode {
      * This sets the 1 flywheel motor, 1 back spin CR servo and the 2 index CR servos to the
      * given power.
      */
-    public void setLauncher(double flyPower, double indexPower) {
+    public void setLauncher(double flyPower, double indexPower, double backSpinPower) {
         flyWheel.setPower(flyPower);
         backSpin.setPower(flyPower);
         indexLeft.setPower(indexPower);

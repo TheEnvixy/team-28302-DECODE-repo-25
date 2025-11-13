@@ -46,6 +46,12 @@ public class ShooterSideRedAuto extends LinearOpMode{
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        flyWheel.setDirection(DcMotor.Direction.FORWARD);
+        // Incase of wiring into the wrong ports these flags can be switched
+        backSpin.setDirection(DcMotor.Direction.FORWARD);
+        indexLeft.setDirection(DcMotor.Direction.REVERSE);
+        indexRight.setDirection(DcMotor.Direction.FORWARD);
+
 
         // Zero power brake for stability
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,7 +70,8 @@ public class ShooterSideRedAuto extends LinearOpMode{
 
         waitForStart();
 
-        movement (2, 2);
+        movement (2, 0);
+        movement (0, -2);
         shootRings();
         stopAllMotors();
     }
@@ -126,7 +133,7 @@ public class ShooterSideRedAuto extends LinearOpMode{
         // Feed rings into shooter
         indexLeft.setPower(INDEX_SPEED);
         indexRight.setPower(INDEX_SPEED);
-        sleep(2500); // Duration of shooting
+        sleep(4000); // Duration of shooting
 
         // Stop everything
         flyWheel.setPower(0);
