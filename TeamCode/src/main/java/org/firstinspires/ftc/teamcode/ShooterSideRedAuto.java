@@ -71,7 +71,7 @@ public class ShooterSideRedAuto extends LinearOpMode{
         waitForStart();
 
         movement (-8, 0);
-        movement (0, 5);
+        movement (0, -5);
         shootRings();
         stopAllMotors();
     }
