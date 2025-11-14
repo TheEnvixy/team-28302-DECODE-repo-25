@@ -176,10 +176,16 @@ public class TeleOpNoEndGame extends OpMode {
 
         ///For controller 2
         ///             TO MAKE THE BOT SHOOT
-        if (gamepad2.a) {
+        if (gamepad2.a) { //Shoots the ball
             setLauncher(flyWheelSpeed,INDEX_GOAL_SPEED,1);
-        } else {
-            setLauncher(STOP_SPEED,STOP_SPEED,1);
+        }
+        else if (gamepad2.b){ //Spins the ball back into the shooter
+            setBackSpin(1);
+        }
+        else {
+            setLauncher(STOP_SPEED,STOP_SPEED,STOP_SPEED);
+            setBackSpin (STOP_SPEED);
+
         }
         ///             SO THE DRIVER CAN CHANGE THE SPEED OF THE FLY WHEEL
         //Cycles throught the speed mutipliers
@@ -194,9 +200,9 @@ public class TeleOpNoEndGame extends OpMode {
         if (flyWheelSpeedCounter < 1) flyWheelSpeedCounter = 3;
         // Cycle through speed settings
         if (flyWheelSpeedCounter == 1) {
-            flyWheelSpeed = 0.60;
+            flyWheelSpeed = 0.9;
         } else if (flyWheelSpeedCounter == 2) {
-            flyWheelSpeed = 0.80;
+            flyWheelSpeed = 0.95;
         } else if (flyWheelSpeedCounter == 3){
             flyWheelSpeed = 1;
         }
@@ -205,14 +211,6 @@ public class TeleOpNoEndGame extends OpMode {
         // Remember last button states
         prevRightBumper2 = gamepad2.right_bumper;
         prevLeftBumper2 = gamepad2.left_bumper;
-        ///       SO YOU CAN MOVE THE BALL BACK IN TO GET MORE MOMENTUM
-        //To move balls back in the shoot
-        if (gamepad2.b){
-            setBackSpin(1);
-        }
-        else {
-            setBackSpin (STOP_SPEED);
-        }
 
         //Updates all the data
         telemetry.update();
@@ -255,7 +253,7 @@ public class TeleOpNoEndGame extends OpMode {
      */
     public void setLauncher(double flyPower, double indexPower, double backSpinPower) {
         flyWheel.setPower(flyPower);
-        backSpin.setPower(flyPower);
+        backSpin.setPower(backSpinPower);
         indexLeft.setPower(indexPower);
         indexRight.setPower(indexPower);
     }
