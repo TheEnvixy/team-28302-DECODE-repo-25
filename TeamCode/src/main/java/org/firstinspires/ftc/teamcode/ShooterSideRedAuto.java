@@ -70,8 +70,8 @@ public class ShooterSideRedAuto extends LinearOpMode{
 
         waitForStart();
 
-        movement (2, 0);
-        movement (0, -2);
+        movement (-8, 0);
+        movement (0, 5);
         shootRings();
         stopAllMotors();
     }
@@ -96,7 +96,7 @@ public class ShooterSideRedAuto extends LinearOpMode{
         rightBackDrive.setTargetPosition(rightBackTarget);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
