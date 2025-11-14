@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="FarSideBlueAuto", group="Linear Opmode")
-public class FarSideBlueAuto extends LinearOpMode{
+@Autonomous(name="FarSideRedAuto", group="Linear Opmode")
+public class FarSideRedAuto extends LinearOpMode{
 
     // Drive motors
     private DcMotor leftFrontDrive = null;
