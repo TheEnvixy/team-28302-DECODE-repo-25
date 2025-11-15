@@ -70,9 +70,9 @@ public class FarSideRedAuto extends LinearOpMode{
 
         waitForStart();
 
-        movement (-96, 0);
+        movement (96, 0);
         turnrobot (0.5,45,false);
-        movement (-25, 0);
+        movement (35, 0);
         shootRings();
         stopAllMotors();
     }

@@ -229,9 +229,9 @@ public class TeleOpNoEndGame extends OpMode {
      */
     void mecanumDrive(double forward, double strafe, double rotate, double mutiplier){
 
-        /* the denominator is the largest motor power (absolute value) or 1
-         * This ensures all the powers maintain the same ratio,
-         * but only if at least one is out of the range [-1, 1]
+        /*the denominator is the largest motor power (absolute value) or 1
+          This ensures all the powers maintain the same ratio,
+          but only if at least one is out of the range [-1, 1]
          */
         double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(rotate), 1);
 
